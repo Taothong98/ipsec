@@ -1,0 +1,23 @@
+
+IKEv2 Script   Copyright (c) 2020-2025 Lin Song   2 Sep 2025
+
+## Starting IKEv2 setup in auto mode, using custom options.
+[2K## Checking for MOBIKE support... available[2K## Generating CA and server certificates...[2K## Generating client certificate...[2K## Creating client configuration...[2K## Adding a new IKEv2 connection...WARNING: ipsec auto has been deprecated
+[2K[1A[2K[1A[2K[1A[2K[1A[2K================================================
+
+IKEv2 setup successful. Details for IKEv2 mode:
+
+VPN server address: 172.30.30.100
+VPN client name: vpnclient
+
+Client configuration is available inside the
+Docker container at:
+/etc/ipsec.d/vpnclient.p12 (for Windows & Linux)
+/etc/ipsec.d/vpnclient.sswan (for Android)
+/etc/ipsec.d/vpnclient.mobileconfig (for iOS & macOS)
+
+Next steps: Configure IKEv2 clients. See:
+https://vpnsetup.net/clients2
+
+================================================
+

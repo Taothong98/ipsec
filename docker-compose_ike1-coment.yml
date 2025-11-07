@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  ipsec-server:
+    # --- ✅ ใช้ Image สำเร็จรูป ---
+    image: hwdsl2/ipsec-vpn-server:latest
+    container_name: ipsec-server
+    restart: unless-stopped
+    environment:
+      # --- Pre-Shared Key (PSK) สำหรับ IKEv2 และ L2TP ---
+      - VPN_IPSEC_PSK=1234567890
+      - VPN_PUBLIC_IP=172.30.30.100
+      # --- สร้าง User แรก ---
+      - VPN_USER=testuser       # <-- ⚠️ เปลี่ยน Username
+      - VPN_PASSWORD=testpassword   # <-- ⚠️ เปลี่ยน Password
+      # --- Optional: Server ID (Client might need to match this) ---
+      - VPN_SERVER_ID=@ipsec-server
+      # --- Optional: DNS Servers ---
+      - VPN_DNS_SRV1=8.8.8.8
+      - VPN_DNS_SRV2=1.1.1.1
+      # - VPN_IKEV2_ONLY=yes      
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE 
+    privileged: true  
+    ports:
+      - "500:500/udp"    # IKE
+      - "4500:4500/udp"  # NAT-T
+    networks:
+      net:
+        ipv4_address: 172.30.30.100
+      net-lan-a:
+        ipv4_address: 172.20.0.10
+
+# /opt/src/run.sh
+
+
+  ipsec-client:
+    # --- ✅ เปลี่ยนไปใช้ Image สำเร็จรูป ---
+    image: fengzhou/ipsec-vpn-client:latest
+    container_name: ipsec-client
+    restart: unless-stopped
+    # --- ✅ ตั้งค่า Client ผ่าน Environment Variables ---
+    environment:
+      # --- ประเภท VPN ---
+      - VPN_TYPE=ikev2
+      # --- ข้อมูล Server ---
+      - VPN_SERVER_IP=172.30.30.100       # ใช้ชื่อ service ของ Server
+      # --- ข้อมูล Authentication ---
+      # - VPN_PSEC_PSK=yourSecretPSK123    # <-- ⚠️ ต้องตรงกับ Server
+      - VPN_IPSEC_PSK=1234567890
+      - VPN_USER=testuser             # <-- ⚠️ ต้องตรงกับ Server
+      - VPN_PASSWORD=testpassword     # <-- ⚠️ ต้องตรงกับ Server
+      - VERBOSE=true
+      # --- (Optional) ตั้งค่า ID (อาจจะไม่จำเป็น) ---
+      - VPN_REMOTE_ID=@172.30.30.100 # Expected Server ID (if server enforces it)
+      - VPN_ID=ipsec-client     # Client's ID      
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE 
+    privileged: true  
+    volumes:
+      - ./ipsec_client.conf:/etc/ipsec.conf
+      # - ./ipsec_client.conf:/etc/ipsec.conf:ro
+      # - ./ipsec_client.conf:/opt/src/ipsec.conf
+    
+    networks:
+      net:
+        ipv4_address: 172.30.30.99
+      net-lan-b:
+        ipv4_address: 172.25.0.10
+
+
+networks:
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.30.0/24
+
+  net-lan-a:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+  net-lan-b:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
