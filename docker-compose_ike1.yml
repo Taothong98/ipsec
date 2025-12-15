@@ -4,7 +4,7 @@ services:
   ipsec-server:
     image: hwdsl2/ipsec-vpn-server:latest
     container_name: ipsec-server
-    restart: unless-stopped
+    # restart: unless-stopped
     environment:
       - VPN_IPSEC_PSK=1234567890
       - VPN_PUBLIC_IP=172.30.30.100
@@ -21,8 +21,8 @@ services:
       - "500:500/udp"    # IKE
       - "4500:4500/udp"  # NAT-T
     volumes:
-      - ./ipsec_server.sh:/opt/src/run.sh 
       - ./ipsec_server.conf:/etc/ipsec.conf     
+      # - ./ipsec_server.sh:/opt/src/run.sh 
 
     networks:
       net:
@@ -37,17 +37,16 @@ services:
     # --- ✅ เปลี่ยนไปใช้ Image สำเร็จรูป ---
     image: fengzhou/ipsec-vpn-client:latest
     container_name: ipsec-client
-    restart: unless-stopped
-    # --- ✅ ตั้งค่า Client ผ่าน Environment Variables ---
+    # restart: unless-stopped
     environment:
       - VPN_TYPE=ikev2
-      - VPN_SERVER_IP=172.30.30.100       # ใช้ชื่อ service ของ Server
+      - VPN_SERVER_IP=172.30.30.100       
       - VPN_IPSEC_PSK=1234567890
-      - VPN_USER=testuser             # <-- ⚠️ ต้องตรงกับ Server
-      - VPN_PASSWORD=testpassword     # <-- ⚠️ ต้องตรงกับ Server
+      - VPN_USER=testuser             
+      - VPN_PASSWORD=testpassword     
       - VERBOSE=true
-      - VPN_REMOTE_ID=@172.30.30.100 # Expected Server ID (if server enforces it)
-      - VPN_ID=ipsec-client     # Client's ID      
+      - VPN_REMOTE_ID=@172.30.30.100 
+      - VPN_ID=ipsec-client         
     cap_add:
       - NET_ADMIN
       - SYS_MODULE 
@@ -55,7 +54,7 @@ services:
     volumes:
       - ./ipsec_client.conf:/etc/ipsec.conf
       # - ./ipsec_client.conf:/opt/src/ipsec.conf
-      - ./ipsec_client.sh:/opt/src/docker-entrypoint.sh
+      # - ./ipsec_client.sh:/opt/src/docker-entrypoint.sh
 
     
     networks:
@@ -65,19 +64,19 @@ services:
         ipv4_address: 172.25.0.10
 
 
+
+
 networks:
   net:
     driver: bridge
     ipam:
       config:
         - subnet: 172.30.30.0/24
-
   net-lan-a:
     driver: bridge
     ipam:
       config:
         - subnet: 172.20.0.0/24
-
   net-lan-b:
     driver: bridge
     ipam:
