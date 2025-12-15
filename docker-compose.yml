@@ -2,7 +2,11 @@ version: '3.8'
 
 services:
   ipsec-server:
-    image: hwdsl2/ipsec-vpn-server:latest
+    build:
+      context: .
+      dockerfile: /dockerfile.server
+
+    # image: hwdsl2/ipsec-vpn-server:latest
     container_name: ipsec-server
     # restart: unless-stopped
     environment:
@@ -22,7 +26,11 @@ services:
       - "4500:4500/udp"  # NAT-T
     volumes:
       - ./ipsec_server.conf:/etc/ipsec.conf     
+
       # - ./ipsec_server.sh:/opt/src/run.sh 
+      # - ./run.sh:/opt/src/run.sh 
+
+
 
     networks:
       net:
@@ -34,8 +42,11 @@ services:
 
 
   ipsec-client:
-    # --- ✅ เปลี่ยนไปใช้ Image สำเร็จรูป ---
-    image: fengzhou/ipsec-vpn-client:latest
+    build:
+      context: .
+      dockerfile: /dockerfile.client
+
+    # image: fengzhou/ipsec-vpn-client:latest
     container_name: ipsec-client
     # restart: unless-stopped
     environment:
@@ -54,7 +65,10 @@ services:
     volumes:
       - ./ipsec_client.conf:/etc/ipsec.conf
       # - ./ipsec_client.conf:/opt/src/ipsec.conf
+
       # - ./ipsec_client.sh:/opt/src/docker-entrypoint.sh
+      # - ./docker-entrypoint.sh:/opt/src/docker-entrypoint.sh
+
 
     
     networks:

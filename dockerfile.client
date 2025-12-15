@@ -1,0 +1,12 @@
+# ใช้ Ubuntu 22.04 เป็น Base
+FROM fengzhou/ipsec-vpn-client:latest
+
+
+COPY ipsec_client.sh /opt/src/ipsec_client.sh
+RUN chmod 755 /opt/src/ipsec_client.sh
+
+# ตรวจสอบแบบง่ายๆ
+RUN ls -l /opt/src/ipsec_client.sh
+
+
+CMD ["/opt/src/ipsec_client.sh"]

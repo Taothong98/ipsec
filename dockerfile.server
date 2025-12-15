@@ -1,0 +1,11 @@
+FROM hwdsl2/ipsec-vpn-server:latest
+
+# COPY ไฟล์และให้ permission
+COPY ipsec_server.sh /opt/src/ipsec_server.sh
+RUN chmod 755 /opt/src/ipsec_server.sh
+
+# ตรวจสอบแบบง่ายๆ
+RUN ls -l /opt/src/ipsec_server.sh
+
+
+CMD ["/opt/src/ipsec_server.sh"]
