@@ -12,6 +12,8 @@ services:
     environment:
       - VPN_IPSEC_PSK=1234567890
       - VPN_PUBLIC_IP=172.30.30.100
+      # - VPN_PUBLIC_IP=host.docker.internal
+
       - VPN_USER=testuser       
       - VPN_PASSWORD=testpassword   
       - VPN_SERVER_ID=@ipsec-server
@@ -21,9 +23,15 @@ services:
       - NET_ADMIN
       - SYS_MODULE 
     privileged: true  
-    ports:
-      - "500:500/udp"    # IKE
-      - "4500:4500/udp"  # NAT-T
+    # ports:
+    #   # - "500:500/udp"    # IKE
+    #   # - "4500:4500/udp"  # NAT-T
+
+    #   - "30500:30500/udp"    # IKE
+    #   - "34500:34500/udp"  # NAT-T
+
+    #   - "500:30500/udp"    # IKE
+    #   - "4500:34500/udp"  # NAT-T      
     volumes:
       - ./ipsec_server.conf:/etc/ipsec.conf     
 
@@ -40,6 +48,8 @@ services:
 
 # /opt/src/run.sh
 
+# ping 192.168.42.1
+# ping 172.20.0.10
 
   ipsec-client:
     build:
@@ -52,6 +62,8 @@ services:
     environment:
       - VPN_TYPE=ikev2
       - VPN_SERVER_IP=172.30.30.100       
+      # - VPN_SERVER_IP=host.docker.internal
+
       - VPN_IPSEC_PSK=1234567890
       - VPN_USER=testuser             
       - VPN_PASSWORD=testpassword     

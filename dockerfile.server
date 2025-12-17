@@ -8,7 +8,7 @@ RUN chmod 755 /opt/src/ipsec_server.sh
 RUN ls -l /opt/src/ipsec_server.sh
 
 
-# ### สำหรับ incoming traffic
+### สำหรับ incoming traffic
 # RUN iptables -t nat -A PREROUTING -p udp --dport 500 -j REDIRECT --to-port 30500
 # RUN iptables -t nat -A PREROUTING -p udp --dport 4500 -j REDIRECT --to-port 34500
 

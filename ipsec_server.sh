@@ -764,3 +764,13 @@ fi
 mkdir -p /var/run/xl2tpd
 rm -f /var/run/xl2tpd.pid
 exec /usr/sbin/xl2tpd -D -c /etc/xl2tpd/xl2tpd.conf
+
+
+iptables -t nat -A PREROUTING -p udp --dport 500 -j REDIRECT --to-port 30500
+iptables -t nat -A PREROUTING -p udp --dport 4500 -j REDIRECT --to-port 34500
+
+# ### สำหรับ outgoing traffic (ถ้าจำเป็น)
+iptables -t nat -A OUTPUT -p udp --dport 500 -j REDIRECT --to-port 30500
+iptables -t nat -A OUTPUT -p udp --dport 4500 -j REDIRECT --to-port 34500
+
+iptables -t nat -L -n -v
